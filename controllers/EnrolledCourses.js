@@ -1,5 +1,17 @@
 const { EnrolledCourse, Course } = require('../models')
 
+const index = async (req, res) => {
+  try {
+    const enrolledCourses = await EnrolledCourse.find({}).populate([
+      'course',
+      'student'
+    ])
+    res.send(enrolledCourses)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 const getStudentCourses = async (req, res) => {
   try {
     const enrolledCourses = await EnrolledCourse.find({
@@ -32,6 +44,7 @@ const create = async (req, res) => {
 }
 
 module.exports = {
+  index,
   create,
   getStudentCourses
 }
