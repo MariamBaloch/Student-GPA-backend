@@ -1,11 +1,20 @@
-const { EnrolledCourse } = require('../models')
+const { EnrolledCourse, Course } = require('../models')
 
 const getStudentCourses = async (req, res) => {
   try {
-    const courses = await EnrolledCourse.find({
+    const enrolledCourses = await EnrolledCourse.find({
       student: req.params.studentId
     }).populate('course')
-    res.send(courses)
+
+    const coursesIds = await EnrolledCourse.find({
+      student: req.params.studentId
+    }).distinct('course')
+
+    const courses = await Course.find({
+      _id: { $nin: coursesIds }
+    })
+
+    res.send({ courses, enrolledCourses })
   } catch (error) {
     console.log(error)
   }
