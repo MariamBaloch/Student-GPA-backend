@@ -35,7 +35,7 @@ const getStudentCourses = async (req, res) => {
 const create = async (req, res) => {
   try {
     const enrolledCourse = await EnrolledCourse.create(req.body)
-    enrolledCourse.grade = { score: null, letter: null }
+    enrolledCourse.grade = { score: 1, letter: 'D' }
     await enrolledCourse.save()
     res.send(enrolledCourse)
   } catch (error) {
