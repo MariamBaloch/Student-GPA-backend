@@ -9,6 +9,7 @@ require('./config/database')
 var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/users')
 const studentRouter = require('./routes/students')
+const courseRouter = require('./routes/courses')
 
 var app = express()
 
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
 app.use('/students', studentRouter)
+app.use('/courses', courseRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
