@@ -4,7 +4,7 @@ const getStudentCourses = async (req, res) => {
   try {
     const enrolledCourses = await EnrolledCourse.find({
       student: req.params.studentId
-    }).populate('course')
+    }).populate(['course', 'student'])
 
     const coursesIds = await EnrolledCourse.find({
       student: req.params.studentId
@@ -23,6 +23,8 @@ const getStudentCourses = async (req, res) => {
 const create = async (req, res) => {
   try {
     const enrolledCourse = await EnrolledCourse.create(req.body)
+    enrolledCourse.grade = { score: null, letter: null }
+    await enrolledCourse.save()
     res.send(enrolledCourse)
   } catch (error) {
     console.log(error)
