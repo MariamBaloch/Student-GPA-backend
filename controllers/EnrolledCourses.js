@@ -45,11 +45,10 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const letters = ['F', 'D', 'C', 'B', 'A']
     const enrolledCourse = await EnrolledCourse.findById(req.params.id)
     enrolledCourse.grade = {
       score: req.body.score,
-      letter: letters[req.body.score]
+      letter: req.body.letter
     }
     await enrolledCourse.save()
     res.send(enrolledCourse)
