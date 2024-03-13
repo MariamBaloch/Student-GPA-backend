@@ -1,4 +1,5 @@
 const { Student, EnrolledCourse } = require('../models')
+const mongoose = require('mongoose')
 
 const index = async (req, res) => {
   try {
@@ -32,7 +33,7 @@ const index = async (req, res) => {
         email: student.email,
         createdAt: student.createdAt,
         updatedAt: student.updatedAt,
-        gpa: gpaData ? gpaData.overall : null
+        gpa: gpaData ? Math.round(gpaData.overall * 100) / 100 : null
       }
     })
 
@@ -44,7 +45,36 @@ const index = async (req, res) => {
 
 const show = async (req, res) => {
   try {
-    const student = await Student.findById(req.params.id)
+    let student = await Student.findById(req.params.id)
+    console.log(req.params.id)
+    const overallGPA = await EnrolledCourse.aggregate([
+      {
+        $match: { student: student._id }
+      },
+      {
+        $group: {
+          _id: '$student',
+          totalScore: { $sum: '$grade.score' },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          student: '$_id',
+          overall: { $divide: ['$totalScore', '$count'] }
+        }
+      }
+    ])
+
+    student = {
+      _id: student._id,
+      name: student.name,
+      email: student.email,
+      createdAt: student.createdAt,
+      updatedAt: student.updatedAt,
+      gpa: overallGPA[0] ? Math.round(overallGPA[0].overall * 100) / 100 : null
+    }
     res.send(student)
   } catch (error) {
     console.log(error)
