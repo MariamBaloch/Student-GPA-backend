@@ -35,7 +35,22 @@ const getStudentCourses = async (req, res) => {
 const create = async (req, res) => {
   try {
     const enrolledCourse = await EnrolledCourse.create(req.body)
-    enrolledCourse.grade = { score: 1, letter: 'D' }
+    enrolledCourse.grade = { score: null, letter: null }
+    await enrolledCourse.save()
+    res.send(enrolledCourse)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const update = async (req, res) => {
+  try {
+    const letters = ['F', 'D', 'C', 'B', 'A']
+    const enrolledCourse = await EnrolledCourse.findById(req.params.id)
+    enrolledCourse.grade = {
+      score: req.body.score,
+      letter: letters[req.body.score]
+    }
     await enrolledCourse.save()
     res.send(enrolledCourse)
   } catch (error) {
@@ -46,5 +61,6 @@ const create = async (req, res) => {
 module.exports = {
   index,
   create,
-  getStudentCourses
+  getStudentCourses,
+  update
 }
